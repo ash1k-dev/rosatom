@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% block title %}Форма создания должности{% endblock %}
+{% block content %}
+
+<body>
+    <h1>Форма создания должности</h1>
+    <form id="positionForm">
+        <label for="name">Должность:
+            <input type="text" id="name" name="name" required>
+        </label>
+        <label for="category">Категория:
+            <select id="category" name="category" required>
+                <option value="">Выберите категорию</option>
+                <option value="руководитель">руководитель</option>
+                <option value="специалист">специалист</option>
+                <option value="служащий">служащий</option>
+                <option value="рабочий">рабочий</option>
+            </select>
+        </label>
+        <button type="submit">Создать должность</button>
+    </form>
+
+    <script>
+        const API_BASE_URL = "http://localhost:8000/api";
+
+        document.getElementById('positionForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const formData = new FormData(event.target);
+            const data = Object.fromEntries(formData.entries());
+
+            fetch(`${API_BASE_URL}/create-position/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Success:', data);
+                alert('Должность создана успешно!');
+
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+                alert('Ошибка при создании должности!');
+            });
+        });
+    </script>
+</body>
+</html>
+{% endblock %}

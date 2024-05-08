@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% block title %}Список должностей{% endblock %}
+{% block content %}
+
+<body>
+    <h1>Список должностей</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Должность</th>
+                <th>Категория</th>
+            </tr>
+        </thead>
+        <tbody id="positionsTable">
+        </tbody>
+    </table>
+
+    <script>
+        const API_BASE_URL = "http://localhost:8000/api/";
+        const BASE_URL = "http://localhost:8000/";
+
+        window.onload = function() {
+            fetch(`${API_BASE_URL}get-positions`)
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data)
+                    const positionsTable = document.getElementById('positionsTable');
+                    data.forEach(position => {
+                        const row = document.createElement('tr');
+                        const positionCell = document.createElement('td');
+                        const categoryCell = document.createElement('td');
+
+                        positionCell.innerHTML = `<a href="${BASE_URL}positions/${position.id}">${position.name}</a>`;
+                        categoryCell.textContent = position.category;
+
+                        row.appendChild(positionCell);
+                        row.appendChild(categoryCell);
+                        positionsTable.appendChild(row);
+                    });
+                })
+                .catch(error => {
+                    console.error('Ошибка при загрузке данных:', error);
+                });
+        };
+    </script>
+</body>
+</html>
+{% endblock %}

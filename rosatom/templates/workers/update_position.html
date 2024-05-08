@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+{% block title %}Форма редактирования должности{% endblock %}
+{% block content %}
+<body>
+    <h1>Форма редактирования должности</h1>
+    <form id="positionForm">
+        <label for="name">Должность:
+            <input type="text" id="name" name="name" required>
+        </label>
+        <label for="category">Категория:
+            <input type="text" id="category" name="category" required>
+        </label>
+        <button type="submit">Обновить должность</button>
+        <button type="button" id="deleteButton">Удалить должность</button>
+    </form>
+
+    <script>
+        const API_BASE_URL = "http://localhost:8000/api";
+        const BASE_URL = "http://localhost:8000/";
+        var id = JSON.parse ("{{id | escapejs}}");
+
+        window.onload = function() {
+            fetch(`${API_BASE_URL}/get-position/${id}/`)
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('name').value = data.name;
+                    document.getElementById('category').value = data.category;
+                })
+                .catch(error => console.error('Ошибка при загрузке данных:', error));
+        };
+
+        document.getElementById('positionForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const formData = new FormData(event.target);
+            const data = Object.fromEntries(formData.entries());
+            data.id = id;
+
+            fetch(`${API_BASE_URL}/update-position/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Success:', data);
+                alert('Должность обновлена успешно!');
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Ошибка при обновлении должности! id: ' + id);
+            });
+        });
+
+        document.getElementById('deleteButton').addEventListener('click', function() {
+            fetch(`${API_BASE_URL}/delete-position/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ id: id }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Success:', data);
+                alert('Должность удалена успешно! id: ' + id);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Невозможно удалить привязанную к сотруднику должность id: ' + id);
+            });
+        });
+    </script>
+</body>
+</html>
+{% endblock %}
