@@ -1,4 +1,59 @@
 {% extends 'base.html' %}
 {% block title %}Сотрудники{% endblock %}
 {% block content %}
+<body>
+    <h1>Список сотрудников</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>ФИО</th>
+                <th>Пол</th>
+                <th>Возраст</th>
+                <th>Должность</th>
+                <th>Категория</th>
+            </tr>
+        </thead>
+        <tbody id="employeesTable">
+        </tbody>
+    </table>
+
+    <script>
+        const API_BASE_URL = "http://localhost:8000/api/";
+        const BASE_URL = "http://localhost:8000/";
+
+        window.onload = function() {
+            fetch(`${API_BASE_URL}get-employees`)
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data)
+                    const employeesTable = document.getElementById('employeesTable');
+                    data.forEach(employee => {
+                        const row = document.createElement('tr');
+                        const nameCell = document.createElement('td');
+                        const sexCell = document.createElement('td');
+                        const ageCell = document.createElement('td');
+                        const position_nameCell = document.createElement('td');
+                        const position_categoryCell = document.createElement('td');
+
+
+                        nameCell.innerHTML = `<a href="${BASE_URL}employees/${employee.id}">${employee.name}</a>`;
+                        sexCell.textContent = employee.sex;
+                        ageCell.textContent = employee.age;
+                        position_categoryCell.textContent = employee.position_category;
+                        position_nameCell.textContent = employee.position_name;
+
+                        row.appendChild(nameCell);
+                        row.appendChild(sexCell);
+                        row.appendChild(ageCell);
+                        row.appendChild(position_nameCell);
+                        row.appendChild(position_categoryCell);
+                        employeesTable.appendChild(row);
+                    });
+                })
+                .catch(error => {
+                    console.error('Ошибка при загрузке данных:', error);
+                });
+        };
+    </script>
+</body>
 {% endblock %}

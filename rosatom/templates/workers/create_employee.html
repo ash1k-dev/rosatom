@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% block title %}Создание работника{% endblock %}
+{% block content %}
+<body>
+    <h1>Форма создания работника</h1>
+    <form id="employeeForm">
+        <label for="fullName">ФИО:
+            <input type="text" id="fullName" name="fullName" required>
+        </label>
+        <label for="specialty">Специальность:
+            <input type="text" id="specialty" name="specialty" required>
+        </label>
+        <label for="gender">Пол:
+            <select id="gender" name="gender" required>
+                <option value="">Выберите пол</option>
+                <option value="male">Мужской</option>
+                <option value="female">Женский</option>
+            </select>
+        </label>
+        <label for="birthDate">Дата рождения:
+            <input type="date" id="birthDate" name="birthDate" required>
+        </label>
+        <button type="submit">Создать работника</button>
+    </form>
+
+    <script>
+        const API_BASE_URL = "http://localhost:8000/api";
+
+        document.getElementById('employeeForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const formData = new FormData(event.target);
+            const data = Object.fromEntries(formData.entries());
+
+            fetch(`${API_BASE_URL}/create-employee/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Success:', data);
+                alert('Работник создан успешно!');
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+                alert('Ошибка при создании работника!');
+            });
+        });
+    </script>
+</body>
+</html>
+{% endblock %}

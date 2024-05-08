@@ -90,4 +90,17 @@ def delete_employee(request, employee_id):
 
 def update_employee(request, employee_id):
     """Редактирование сотрудника"""
-    pass
+    data = json.loads(request.body)
+    name = data["name"]
+    sex = data["sex"]
+    birth_date = data["birth_date"]
+    position_id = data["position_id"]
+    if calculate_age(birth_date) < 18:
+        return JsonResponse({"success": False})
+    if request.method == "POST":
+        with connection.cursor() as cursor:
+            cursor.execute(
+                "UPDATE workers_employee SET name = %s, sex = %s, birth_date = %s, position_id = %s WHERE id = %s",
+                [name, sex, birth_date, position_id, employee_id],
+            )
+        return JsonResponse({"success": True})

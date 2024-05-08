@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Редактирование работника</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 10px;
+        }
+        button {
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Форма редактирования работника</h1>
+    <form id="employeeForm">
+        <label for="fullName">ФИО:
+            <input type="text" id="fullName" name="fullName" required>
+        </label>
+        <label for="specialty">Специальность:
+            <input type="text" id="specialty" name="specialty" required>
+        </label>
+        <label for="gender">Пол:
+            <select id="gender" name="gender" required>
+                <option value="">Выберите пол</option>
+                <option value="male">Мужской</option>
+                <option value="female">Женский</option>
+            </select>
+        </label>
+        <label for="birthDate">Дата рождения:
+            <input type="date" id="birthDate" name="birthDate" required>
+        </label>
+        <button type="submit">Обновить информацию</button>
+        <button type="button" id="deleteButton">Удалить работника</button>
+    </form>
+
+    <script>
+        const API_BASE_URL = "http://localhost:8000/";
+        var id = JSON.parse ("{{id | escapejs}}");
+
+        window.onload = function() {
+            fetch(`${API_BASE_URL}get-employee/${id}`)
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('name').value = data.name;
+                    document.getElementById('sex').value = data.sex;
+                    document.getElementById('birth_date').value = data.birth_date;
+                    document.getElementById('position_name').value = data.position_name;
+                })
+                .catch(error => console.error('Ошибка при загрузке данных:', error));
+        };
+
+        document.getElementById('employeeForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const formData = new FormData(event.target);
+            const data = Object.fromEntries(formData.entries());
+
+            fetch(`${API_BASE_URL}update-employee/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Success:', data);
+                alert('Информация о работнике обновлена успешно!');
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Ошибка при обновлении информации о работнике!');
+            });
+        });
+
+        document.getElementById('deleteButton').addEventListener('click', function() {
+            fetch(`${API_BASE_URL}/delete-employee`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ id: employeeId }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Success:', data);
+                alert('Работник удалён успешно!');
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Ошибка при удалении работника!');
+            });
+        });
+    </script>
+</body>
+</html>
