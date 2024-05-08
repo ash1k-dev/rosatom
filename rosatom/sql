@@ -1,0 +1,31 @@
+Создание базы данных rosatom
+CREATE DATABASE rosatom WITH OWNER postgres;
+
+Создание таблицы должностей (position)
+CREATE TABLE Position (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(100) UNIQUE,
+    category VARCHAR(100)
+);
+
+Создание таблицы сотрудников (employee)
+CREATE TABLE Employee (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(100),
+    sex VARCHAR(100),
+    position_id INTEGER,
+    birth_date DATE,
+    FOREIGN KEY (position_id) REFERENCES position(id)
+);
+
+Вставка тестовых данных в таблицу position
+INSERT INTO position (name, category) VALUES
+('Директор', 'руководитель'),
+('Инженер-разработчик', 'специалис'),
+('Инженер по охране труда', 'специалист');
+
+Вставка тестовых данных в таблицу employee
+INSERT INTO employee (name, sex, birth_date, position_id) VALUES
+('Кузнецов Иван Иванович', 'Мужчина', '1990-05-15', 1),
+('Семенов Дмитрий Леонидович', 'Мужчина', '1985-09-20', 2),
+('Жукова Татьяна Сергеевна', 'Женщина', '1988-07-10', 3);
