@@ -1,7 +1,10 @@
+from django.db import connection
 from django.shortcuts import render
 
 
 import json
+
+from workers.api.views.positions import get_positions
 
 
 def positions_page(request):
@@ -27,7 +30,14 @@ def employees_page(request):
 
 def create_employee_page(request):
     """Представление для создания нового сотрудника"""
-    return render(request, "workers/create_employee.html")
+    with connection.cursor() as cursor:
+        cursor.execute(
+            "SELECT workers_position.id,workers_position.name, workers_position.category"
+            " FROM workers_position"
+        )
+        result = cursor.fetchall()
+    context = {"positions": result}
+    return render(request, "workers/create_employee.html", context)
 
 
 def update_employee_page(request, employee_id):
