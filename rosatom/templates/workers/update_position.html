@@ -6,17 +6,20 @@
     <form id="positionForm">
         <label for="name">Должность:
             <input type="text" id="name" name="name" required>
-        </label>
-        <label for="category">Категория:
-            <input type="text" id="category" name="category" required>
-        </label>
+        <label for="category">Категория:</label>
+        <select id="category" name="category">
+            <option value="руководитель">руководитель</option>
+            <option value="специалист">специалист</option>
+            <option value="служащий">служащий</option>
+            <option value="рабочий">рабочий</option>
+        </select><br><br>
         <button type="submit">Обновить должность</button>
         <button type="button" id="deleteButton">Удалить должность</button>
     </form>
 
     <script>
         const API_BASE_URL = "http://localhost:8000/api";
-        const BASE_URL = "http://localhost:8000/";
+        const BASE_URL = "http://localhost:8000/positions/";
         var id = JSON.parse ("{{id | escapejs}}");
 
         window.onload = function() {
@@ -45,6 +48,7 @@
             .then(response => response.json())
             .then(data => {
                 console.log('Success:', data);
+                window.location.href = BASE_URL;
                 alert('Должность обновлена успешно!');
             })
             .catch(error => {
@@ -64,6 +68,7 @@
             .then(response => response.json())
             .then(data => {
                 console.log('Success:', data);
+                window.location.href = BASE_URL;
                 alert('Должность удалена успешно! id: ' + id);
             })
             .catch(error => {

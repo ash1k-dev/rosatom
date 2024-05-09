@@ -22,6 +22,7 @@
 
     <script>
         const API_BASE_URL = "http://localhost:8000/api";
+        const BASE_URL = "http://localhost:8000/positions";
 
         document.getElementById('positionForm').addEventListener('submit', function(event) {
             event.preventDefault();
@@ -38,6 +39,7 @@
             .then(response => response.json())
             .then(data => {
                 console.log('Success:', data);
+                window.location.href = BASE_URL;
                 alert('Должность создана успешно!');
 
             })
