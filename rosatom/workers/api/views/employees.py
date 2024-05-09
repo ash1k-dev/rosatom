@@ -67,9 +67,8 @@ def create_employee(request):
     data = json.loads(request.body)
     name = data["name"]
     sex = data["sex"]
-    birth_date = data["birth_date"]
     position_name = data["position"]
-    birth_date = datetime.fromisoformat(birth_date)
+    birth_date = datetime.fromisoformat(data["birth_date"])
     if calculate_age(birth_date) < 18:
         return JsonResponse({"success": False})
     if request.method == "POST":
@@ -94,17 +93,23 @@ def delete_employee(request, employee_id):
     return redirect("workers:employees")
 
 
-def update_employee(request, employee_id):
+@csrf_exempt
+def update_employee(request):
     """Редактирование сотрудника"""
     data = json.loads(request.body)
+    employee_id = data["id"]
     name = data["name"]
     sex = data["sex"]
-    birth_date = data["birth_date"]
-    position_id = int(data["position_id"])
+    birth_date = datetime.fromisoformat(data["birth_date"])
+    position_name = data["position_name"]
     if calculate_age(birth_date) < 18:
         return JsonResponse({"success": False})
     if request.method == "POST":
         with connection.cursor() as cursor:
+            cursor.execute(
+                "SELECT id FROM workers_position WHERE name = %s", [position_name]
+            )
+            position_id = cursor.fetchone()[0]
             cursor.execute(
                 "UPDATE workers_employee SET name = %s, sex = %s, birth_date = %s, position_id = %s WHERE id = %s",
                 [name, sex, birth_date, position_id, employee_id],

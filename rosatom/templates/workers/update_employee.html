@@ -21,28 +21,29 @@
 <body>
     <h1>Форма редактирования работника</h1>
     <form id="employeeForm">
-        <label for="fullName">ФИО:
-            <input type="text" id="fullName" name="fullName" required>
+        <label for="name">ФИО:
+            <input type="text" id="name" name="name" required>
         </label>
-        <label for="specialty">Специальность:
-            <input type="text" id="specialty" name="specialty" required>
+        <label for="position_name">Специальность:
+            <input type="text" id="position_name" name="position_name" required>
         </label>
-        <label for="gender">Пол:
-            <select id="gender" name="gender" required>
+        <label for="sex">Пол:
+            <select id="sex" name="sex" required>
                 <option value="">Выберите пол</option>
-                <option value="male">Мужской</option>
-                <option value="female">Женский</option>
+                <option value="Мужской">Мужской</option>
+                <option value="Женский">Женский</option>
             </select>
         </label>
-        <label for="birthDate">Дата рождения:
-            <input type="date" id="birthDate" name="birthDate" required>
+        <label for="birth_date">Дата рождения:
+            <input type="date" id="birth_date" name="birth_date" required>
         </label>
         <button type="submit">Обновить информацию</button>
         <button type="button" id="deleteButton">Удалить работника</button>
     </form>
 
     <script>
-        const API_BASE_URL = "http://localhost:8000/";
+        const API_BASE_URL = "http://localhost:8000/api/";
+        const BASE_URL = "http://localhost:8000";
         var id = JSON.parse ("{{id | escapejs}}");
 
         window.onload = function() {
@@ -61,6 +62,7 @@
             event.preventDefault();
             const formData = new FormData(event.target);
             const data = Object.fromEntries(formData.entries());
+            data.id = id;
 
             fetch(`${API_BASE_URL}update-employee/`, {
                 method: 'POST',
@@ -72,6 +74,7 @@
             .then(response => response.json())
             .then(data => {
                 console.log('Success:', data);
+                window.location.href = BASE_URL;
                 alert('Информация о работнике обновлена успешно!');
             })
             .catch(error => {
