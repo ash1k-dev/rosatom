@@ -5,6 +5,7 @@ from django.http import JsonResponse
 import json
 from django.views.decorators.csrf import csrf_exempt
 from services.calculate_age import calculate_age
+from datetime import datetime
 
 
 def get_employees(request):
@@ -67,11 +68,16 @@ def create_employee(request):
     name = data["name"]
     sex = data["sex"]
     birth_date = data["birth_date"]
-    position_id = data["position_id"]
+    position_name = data["position"]
+    birth_date = datetime.fromisoformat(birth_date)
     if calculate_age(birth_date) < 18:
         return JsonResponse({"success": False})
     if request.method == "POST":
         with connection.cursor() as cursor:
+            cursor.execute(
+                "SELECT id FROM workers_position WHERE name = %s", [position_name]
+            )
+            position_id = cursor.fetchone()[0]
             cursor.execute(
                 "INSERT INTO workers_employee (name,sex,birth_date,position_id) VALUES (%s, %s, %s, %s)",
                 [name, sex, birth_date, position_id],
@@ -94,7 +100,7 @@ def update_employee(request, employee_id):
     name = data["name"]
     sex = data["sex"]
     birth_date = data["birth_date"]
-    position_id = data["position_id"]
+    position_id = int(data["position_id"])
     if calculate_age(birth_date) < 18:
         return JsonResponse({"success": False})
     if request.method == "POST":
