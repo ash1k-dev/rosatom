@@ -1,29 +1,38 @@
 {% extends 'base.html' %}
-{% block title %}Создание работника{% endblock %}
+{% block title %}Добавление работника{% endblock %}
 {% block content %}
+
 <body>
     <h1>Форма создания работника</h1>
     <form id="employeeForm">
-        <label for="name">ФИО:
-            <input type="text" id="name" name="name" required>
-        </label>
-        <label for="position">Специальность:
-            <select id="position" name="position" required>
-                {% for id,position, category in positions %}
-            <option value="{{ position }}">{{ position }}</option>
-        {% endfor %}
-            </select>
-        </label>
-        <label for="sex">Пол:
-            <select id="sex" name="sex" required>
-                <option value="">Выберите пол</option>
-                <option value="Мужской">Мужской</option>
-                <option value="Женский">Женский</option>
-            </select>
-        </label>
-        <label for="birth_date">Дата рождения:
-            <input type="date" id="birth_date" name="birth_date" required>
-        </label>
+        <div class="form-group">
+            <label for="name">ФИО:
+                <input type="text" id="name" name="name" required>
+            </label>
+        </div>
+        <div class="form-group">
+            <label for="position">Специальность:
+                <select id="position" name="position" required>
+                    {% for id,position, category in positions %}
+                <option value="{{ position }}">{{ position }}</option>
+            {% endfor %}
+                </select>
+            </label>
+        </div>
+        <div class="form-group">
+            <label for="sex">Пол:
+                <select id="sex" name="sex" required>
+                    <option value="">Выберите пол</option>
+                    <option value="Мужской">Мужской</option>
+                    <option value="Женский">Женский</option>
+                </select>
+            </label>
+        </div>
+        <div class="form-group">
+            <label for="birth_date">Дата рождения:
+                <input type="date" id="birth_date" name="birth_date" required>
+            </label>
+        </div>
         <button type="submit">Создать работника</button>
     </form>
 

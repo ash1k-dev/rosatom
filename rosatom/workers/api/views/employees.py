@@ -84,9 +84,12 @@ def create_employee(request):
         return JsonResponse({"success": True})
 
 
-def delete_employee(request, employee_id):
+@csrf_exempt
+def delete_employee(request):
     """Удаление сотрудника"""
-    if request.method == "GET":
+    data = json.loads(request.body)
+    employee_id = int(data["id"])
+    if request.method == "POST":
         with connection.cursor() as cursor:
             cursor.execute("DELETE FROM workers_employee WHERE id = %s", [employee_id])
 

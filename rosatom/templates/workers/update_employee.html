@@ -1,42 +1,34 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Редактирование работника</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            padding: 20px;
-        }
-        label {
-            display: block;
-            margin-bottom: 10px;
-        }
-        button {
-            margin-top: 10px;
-        }
-    </style>
-</head>
+{% extends 'base.html' %}
+{% block title %}Создание работника{% endblock %}
+{% block content %}
+
 <body>
     <h1>Форма редактирования работника</h1>
     <form id="employeeForm">
-        <label for="name">ФИО:
-            <input type="text" id="name" name="name" required>
-        </label>
-        <label for="position_name">Специальность:
-            <input type="text" id="position_name" name="position_name" required>
-        </label>
-        <label for="sex">Пол:
-            <select id="sex" name="sex" required>
-                <option value="">Выберите пол</option>
-                <option value="Мужской">Мужской</option>
-                <option value="Женский">Женский</option>
-            </select>
-        </label>
-        <label for="birth_date">Дата рождения:
-            <input type="date" id="birth_date" name="birth_date" required>
-        </label>
+        <div class="form-group">
+            <label for="name">ФИО:
+                <input type="text" id="name" name="name" required>
+            </label>
+        </div>
+        <div class="form-group">
+            <label for="position_name">Специальность:
+                <input type="text" id="position_name" name="position_name" required>
+            </label>
+        </div>
+        <div class="form-group">
+            <label for="sex">Пол:
+                <select id="sex" name="sex" required>
+                    <option value="">Выберите пол</option>
+                    <option value="Мужской">Мужской</option>
+                    <option value="Женский">Женский</option>
+                </select>
+        </div>
+        <div class="form-group">
+            </label>
+            <label for="birth_date">Дата рождения:
+                <input type="date" id="birth_date" name="birth_date" required>
+            </label>
+        </div>
         <button type="submit">Обновить информацию</button>
         <button type="button" id="deleteButton">Удалить работника</button>
     </form>
@@ -84,12 +76,12 @@
         });
 
         document.getElementById('deleteButton').addEventListener('click', function() {
-            fetch(`${API_BASE_URL}/delete-employee`, {
+            fetch(`${API_BASE_URL}delete-employee/`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ id: employeeId }),
+                body: JSON.stringify({ id: id }),
             })
             .then(response => response.json())
             .then(data => {
@@ -103,4 +95,4 @@
         });
     </script>
 </body>
-</html>
+{% endblock %}
