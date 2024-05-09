@@ -55,7 +55,7 @@ def delete_position(request):
 def update_position(request):
     """Редактирование должности"""
     data = json.loads(request.body)
-    position_id = data["id"]
+    position_id = int(data["id"])
     category = data["category"]
     name = data["name"]
     with connection.cursor() as cursor:
@@ -63,7 +63,6 @@ def update_position(request):
             "UPDATE workers_position SET name = %s, category = %s WHERE id = %s",
             [name, category, position_id],
         )
-        # return redirect("workers:employees")
     return JsonResponse({"success": True})
 
 
