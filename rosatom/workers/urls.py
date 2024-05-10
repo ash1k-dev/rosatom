@@ -2,30 +2,15 @@ from django.conf.urls import url
 
 app_name = "workers"
 
-from workers.views import (
-    positions_page,
-    create_position_page,
-    update_position_page,
-    employees_page,
-    create_employee_page,
-    update_employee_page,
-)
-
-from workers.api.views.positions import (
-    get_positions,
-    get_position,
-    create_position,
-    update_position,
-    delete_position,
-)
-
-from workers.api.views.employees import (
-    get_employee,
-    get_employees,
-    create_employee,
-    update_employee,
-    delete_employee,
-)
+from workers.api.views.employees import (create_employee, delete_employee,
+                                         get_employee, get_employees,
+                                         update_employee)
+from workers.api.views.positions import (create_position, delete_position,
+                                         get_position, get_positions,
+                                         update_position)
+from workers.views import (create_employee_page, create_position_page,
+                           employees_page, positions_page,
+                           update_employee_page, update_position_page)
 
 urlpatterns = [
     # api для должностей

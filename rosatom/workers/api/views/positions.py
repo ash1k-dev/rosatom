@@ -1,7 +1,7 @@
-from django.db import connection
-
-from django.http import JsonResponse
 import json
+
+from django.db import connection
+from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from services.universal import check_and_refactor
 
@@ -32,6 +32,8 @@ def create_position(request):
     data = json.loads(request.body)
     name = check_and_refactor(data["name"], "position")
     category = data["category"]
+    if name is None:
+        return JsonResponse({"status": "wrong language"})
     if request.method == "POST":
         with connection.cursor() as cursor:
             cursor.execute(
@@ -59,6 +61,9 @@ def update_position(request):
     position_id = int(data["id"])
     category = data["category"]
     name = check_and_refactor(data["name"], "position")
+    print(name)
+    if name is None:
+        return JsonResponse({"status": "wrong language"})
     with connection.cursor() as cursor:
         cursor.execute(
             "UPDATE workers_position SET name = %s, category = %s WHERE id = %s",

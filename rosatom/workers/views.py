@@ -1,8 +1,7 @@
+import json
+
 from django.db import connection
 from django.shortcuts import render
-
-
-import json
 
 from workers.api.views.positions import get_positions
 

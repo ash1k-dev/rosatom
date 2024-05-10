@@ -56,6 +56,10 @@
                     alert('Должность обновлена успешно');
                     window.location.href = BASE_URL;
                 }
+                else if (data.status === 'wrong language') {
+                    console.log('Действия при ошибке');
+                    alert('Допускается только русский язык');
+                }
             })
             .catch(error => {
                 console.error('Error:', error);
@@ -78,6 +82,7 @@
                     alert('Должность удалена успешно');
                     window.location.href = BASE_URL;
                 }
+
             })
             .catch(error => {
                 console.error('Error:', error);

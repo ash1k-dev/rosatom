@@ -1,12 +1,11 @@
-from django.db import connection
-from django.shortcuts import redirect
-
-from django.http import JsonResponse
 import json
+from datetime import datetime
+
+from django.db import connection
+from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from services.employee import calculate_age
 from services.universal import check_and_refactor
-from datetime import datetime
 
 
 def check_exist_employee(birth_date, cursor, name):
