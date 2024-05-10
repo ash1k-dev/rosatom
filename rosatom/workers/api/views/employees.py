@@ -4,7 +4,8 @@ from django.shortcuts import redirect
 from django.http import JsonResponse
 import json
 from django.views.decorators.csrf import csrf_exempt
-from services.employee import calculate_age, check_and_refactor_name
+from services.employee import calculate_age
+from services.universal import check_and_refactor
 from datetime import datetime
 
 
@@ -77,7 +78,7 @@ def get_employee(request, employee_id):
 def create_employee(request):
     """Создание нового сотрудника"""
     data = json.loads(request.body)
-    name = check_and_refactor_name(data["name"])
+    name = check_and_refactor(data["name"], "employee")
     sex = data["sex"]
     position_id = data["position_id"]
     birth_date = datetime.fromisoformat(data["birth_date"])
@@ -114,7 +115,7 @@ def update_employee(request):
     """Редактирование сотрудника"""
     data = json.loads(request.body)
     employee_id = data["id"]
-    name = check_and_refactor_name(data["name"])
+    name = check_and_refactor(data["name"], "employee")
     sex = data["sex"]
     birth_date = datetime.fromisoformat(data["birth_date"])
     position_id = data["position_id"]

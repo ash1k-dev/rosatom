@@ -3,7 +3,7 @@ from django.db import connection
 from django.http import JsonResponse
 import json
 from django.views.decorators.csrf import csrf_exempt
-from services.position import refactor_position
+from services.universal import check_and_refactor
 
 
 def get_positions(request):
@@ -30,7 +30,7 @@ def get_positions(request):
 def create_position(request):
     """Создание новой должности"""
     data = json.loads(request.body)
-    name = refactor_position(data["name"])
+    name = check_and_refactor(data["name"], "position")
     category = data["category"]
     if request.method == "POST":
         with connection.cursor() as cursor:
@@ -58,7 +58,7 @@ def update_position(request):
     data = json.loads(request.body)
     position_id = int(data["id"])
     category = data["category"]
-    name = refactor_position(data["name"])
+    name = check_and_refactor(data["name"], "position")
     with connection.cursor() as cursor:
         cursor.execute(
             "UPDATE workers_position SET name = %s, category = %s WHERE id = %s",
