@@ -11,10 +11,10 @@
             </label>
         </div>
         <div class="form-group">
-            <label for="position_name">Должность:
-                <select id="position_name" name="position_name" required>
+            <label for="position_id">Должность:
+                <select id="position_id" name="position_id" required>
                     {% for id,position_name, category in positions %}
-                        <option value="{{ position_name }}">{{ position_name }}</option>
+                        <option value="{{ id }}">{{ position_name }}</option>
                     {% endfor %}
                 </select>
             </label>
@@ -56,7 +56,7 @@
             .then(data => {
                 if (data.status === 'success') {
                     console.log('Действия при успешном статусе');
-                    alert('Работник изменен успешно');
+                    alert('Работник добавлен успешно');
                     window.location.href = BASE_URL;
                 } else if (data.status === 'wrong language') {
                     console.log('Действия при ошибке');
@@ -64,6 +64,9 @@
                 } else if (data.status === 'too young') {
                     console.log('Действия при ошибке');
                     alert('Возраст сотрудника должен быть не менее 18 лет');
+                } else if (data.status === 'already exists') {
+                    console.log('Действия при ошибке');
+                    alert('Сотрудник с таким ФИО и датой рождения уже существует');
                 }
             })
             .catch((error) => {

@@ -8,6 +8,20 @@ from services.employee import calculate_age, check_and_refactor_name
 from datetime import datetime
 
 
+def check_exist_employee(birth_date, cursor, name):
+    """
+    Проверка существования сотрудника с такой же датой рождения и ФИО
+    (существование сотрудника с таким же ФИО (полный тезка),
+    но другой датой рождения допускается)
+    """
+    cursor.execute(
+        "SELECT * FROM workers_employee WHERE name = %s AND birth_date = %s",
+        [name, birth_date],
+    )
+    exist_user = cursor.fetchone()
+    return exist_user
+
+
 def get_employees(request):
     """Получение списка сотрудников и их данных"""
     with connection.cursor() as cursor:
@@ -65,7 +79,7 @@ def create_employee(request):
     data = json.loads(request.body)
     name = check_and_refactor_name(data["name"])
     sex = data["sex"]
-    position_name = data["position_name"]
+    position_id = data["position_id"]
     birth_date = datetime.fromisoformat(data["birth_date"])
     if name is None:
         return JsonResponse({"status": "wrong language"})
@@ -73,15 +87,15 @@ def create_employee(request):
         return JsonResponse({"status": "too young"})
     if request.method == "POST":
         with connection.cursor() as cursor:
-            cursor.execute(
-                "SELECT id FROM workers_position WHERE name = %s", [position_name]
-            )
-            position_id = cursor.fetchone()[0]
-            cursor.execute(
-                "INSERT INTO workers_employee (name,sex,birth_date,position_id) VALUES (%s, %s, %s, %s)",
-                [name, sex, birth_date, position_id],
-            )
-    return JsonResponse({"status": "success"})
+            exist_user = check_exist_employee(birth_date, cursor, name)
+            if exist_user:
+                return JsonResponse({"status": "already exists"})
+            else:
+                cursor.execute(
+                    "INSERT INTO workers_employee (name,sex,birth_date,position_id) VALUES (%s, %s, %s, %s)",
+                    [name, sex, birth_date, position_id],
+                )
+                return JsonResponse({"status": "success"})
 
 
 @csrf_exempt
@@ -103,19 +117,19 @@ def update_employee(request):
     name = check_and_refactor_name(data["name"])
     sex = data["sex"]
     birth_date = datetime.fromisoformat(data["birth_date"])
-    position_name = data["position_name"]
+    position_id = data["position_id"]
     if name is None:
         return JsonResponse({"status": "wrong language"})
     if calculate_age(birth_date) < 18:
         return JsonResponse({"status": "too young"})
     if request.method == "POST":
         with connection.cursor() as cursor:
-            cursor.execute(
-                "SELECT id FROM workers_position WHERE name = %s", [position_name]
-            )
-            position_id = cursor.fetchone()[0]
-            cursor.execute(
-                "UPDATE workers_employee SET name = %s, sex = %s, birth_date = %s, position_id = %s WHERE id = %s",
-                [name, sex, birth_date, position_id, employee_id],
-            )
-        return JsonResponse({"status": "success"})
+            exist_user = check_exist_employee(birth_date, cursor, name)
+            if exist_user:
+                return JsonResponse({"status": "already exists"})
+            else:
+                cursor.execute(
+                    "UPDATE workers_employee SET name = %s, sex = %s, birth_date = %s, position_id = %s WHERE id = %s",
+                    [name, sex, birth_date, position_id, employee_id],
+                )
+                return JsonResponse({"status": "success"})
