@@ -30,18 +30,24 @@ def employees_page(request):
 
 def create_employee_page(request):
     """Представление для создания нового сотрудника"""
-    with connection.cursor() as cursor:
-        cursor.execute(
-            "SELECT workers_position.id,workers_position.name, workers_position.category"
-            " FROM workers_position"
-        )
-        result = cursor.fetchall()
+    result = get_positions_list()
     context = {"positions": result}
     return render(request, "workers/create_employee.html", context)
 
 
 def update_employee_page(request, employee_id):
     """Представление для редактирования сотрудника"""
-    context = {"id": json.dumps(employee_id)}
-    print(context)
+    result = get_positions_list()
+    context = {"id": json.dumps(employee_id), "positions": result}
     return render(request, "workers/update_employee.html", context)
+
+
+def get_positions_list():
+    """Получение списка должностей из базы данных"""
+    with connection.cursor() as cursor:
+        cursor.execute(
+            "SELECT workers_position.id,workers_position.name, workers_position.category"
+            " FROM workers_position"
+        )
+        result = cursor.fetchall()
+    return result

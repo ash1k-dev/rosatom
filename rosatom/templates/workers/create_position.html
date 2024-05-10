@@ -42,10 +42,11 @@
             })
             .then(response => response.json())
             .then(data => {
-                console.log('Success:', data);
-                window.location.href = BASE_URL;
-                alert('Должность создана успешно!');
-
+                if (data.status === 'success') {
+                    console.log('Действия при успешном статусе');
+                    alert('Должность создана успешно');
+                    window.location.href = BASE_URL;
+                }
             })
             .catch((error) => {
                 console.error('Error:', error);

@@ -11,8 +11,12 @@
             </label>
         </div>
         <div class="form-group">
-            <label for="position_name">Специальность:
-                <input type="text" id="position_name" name="position_name" required>
+            <label for="position_name">Должность:
+                <select id="position_name" name="position_name" required>
+                    {% for id,position_name, category in positions %}
+                        <option value="{{ position_name }}">{{ position_name }}</option>
+                    {% endfor %}
+                </select>
             </label>
         </div>
         <div class="form-group">
@@ -65,9 +69,17 @@
             })
             .then(response => response.json())
             .then(data => {
-                console.log('Success:', data);
-                window.location.href = BASE_URL;
-                alert('Информация о работнике обновлена успешно!');
+                if (data.status === 'success') {
+                    console.log('Действия при успешном статусе');
+                    alert('Работник изменен успешно');
+                    window.location.href = BASE_URL;
+                } else if (data.status === 'wrong language') {
+                    console.log('Действия при ошибке');
+                    alert('Допускается только русский язык (без использования цифр)');
+                } else if (data.status === 'too young') {
+                    console.log('Действия при ошибке');
+                    alert('Возраст сотрудника должен быть не менее 18 лет');
+                }
             })
             .catch(error => {
                 console.error('Error:', error);
@@ -85,8 +97,11 @@
             })
             .then(response => response.json())
             .then(data => {
-                console.log('Success:', data);
-                alert('Работник удалён успешно!');
+                if (data.status === 'success') {
+                    console.log('Действия при успешном статусе');
+                    alert('Работник успешно удален');
+                    window.location.href = BASE_URL;
+                }
             })
             .catch(error => {
                 console.error('Error:', error);

@@ -4,7 +4,7 @@ from django.shortcuts import redirect
 from django.http import JsonResponse
 import json
 from django.views.decorators.csrf import csrf_exempt
-from services.calculate_age import calculate_age
+from services.employee import calculate_age, check_and_refactor_name
 from datetime import datetime
 
 
@@ -43,11 +43,10 @@ def get_employee(request, employee_id):
             " FROM workers_position"
             " LEFT JOIN workers_employee"
             " ON workers_employee.position_id = workers_position.id"
-            " WHERE workers_position.id = %s",
+            " WHERE workers_employee.id = %s",
             [employee_id],
         )
         result = cursor.fetchone()
-    print(result)
     position = {
         "id": result[0],
         "name": result[1],
@@ -57,7 +56,6 @@ def get_employee(request, employee_id):
         "position_name": result[5],
         "position_category": result[6],
     }
-    print(position)
     return JsonResponse(position, safe=False)
 
 
@@ -65,12 +63,14 @@ def get_employee(request, employee_id):
 def create_employee(request):
     """Создание нового сотрудника"""
     data = json.loads(request.body)
-    name = data["name"]
+    name = check_and_refactor_name(data["name"])
     sex = data["sex"]
-    position_name = data["position"]
+    position_name = data["position_name"]
     birth_date = datetime.fromisoformat(data["birth_date"])
+    if name is None:
+        return JsonResponse({"status": "wrong language"})
     if calculate_age(birth_date) < 18:
-        return JsonResponse({"success": False})
+        return JsonResponse({"status": "too young"})
     if request.method == "POST":
         with connection.cursor() as cursor:
             cursor.execute(
@@ -81,7 +81,7 @@ def create_employee(request):
                 "INSERT INTO workers_employee (name,sex,birth_date,position_id) VALUES (%s, %s, %s, %s)",
                 [name, sex, birth_date, position_id],
             )
-        return JsonResponse({"success": True})
+    return JsonResponse({"status": "success"})
 
 
 @csrf_exempt
@@ -92,8 +92,7 @@ def delete_employee(request):
     if request.method == "POST":
         with connection.cursor() as cursor:
             cursor.execute("DELETE FROM workers_employee WHERE id = %s", [employee_id])
-
-    return redirect("workers:employees")
+    return JsonResponse({"status": "success"})
 
 
 @csrf_exempt
@@ -101,12 +100,14 @@ def update_employee(request):
     """Редактирование сотрудника"""
     data = json.loads(request.body)
     employee_id = data["id"]
-    name = data["name"]
+    name = check_and_refactor_name(data["name"])
     sex = data["sex"]
     birth_date = datetime.fromisoformat(data["birth_date"])
     position_name = data["position_name"]
+    if name is None:
+        return JsonResponse({"status": "wrong language"})
     if calculate_age(birth_date) < 18:
-        return JsonResponse({"success": False})
+        return JsonResponse({"status": "too young"})
     if request.method == "POST":
         with connection.cursor() as cursor:
             cursor.execute(
@@ -117,4 +118,4 @@ def update_employee(request):
                 "UPDATE workers_employee SET name = %s, sex = %s, birth_date = %s, position_id = %s WHERE id = %s",
                 [name, sex, birth_date, position_id, employee_id],
             )
-        return JsonResponse({"success": True})
+        return JsonResponse({"status": "success"})

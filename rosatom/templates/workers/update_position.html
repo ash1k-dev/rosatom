@@ -51,13 +51,15 @@
             })
             .then(response => response.json())
             .then(data => {
-                console.log('Success:', data);
-                window.location.href = BASE_URL;
-                alert('Должность обновлена успешно!');
+                if (data.status === 'success') {
+                    console.log('Действия при успешном статусе');
+                    alert('Должность обновлена успешно');
+                    window.location.href = BASE_URL;
+                }
             })
             .catch(error => {
                 console.error('Error:', error);
-                alert('Ошибка при обновлении должности! id: ' + id);
+                alert('Ошибка при обновлении должности!');
             });
         });
 
@@ -71,9 +73,11 @@
             })
             .then(response => response.json())
             .then(data => {
-                console.log('Success:', data);
-                window.location.href = BASE_URL;
-                alert('Должность удалена успешно! id: ' + id);
+                if (data.status === 'success') {
+                    console.log('Действия при успешном статусе');
+                    alert('Должность удалена успешно');
+                    window.location.href = BASE_URL;
+                }
             })
             .catch(error => {
                 console.error('Error:', error);
