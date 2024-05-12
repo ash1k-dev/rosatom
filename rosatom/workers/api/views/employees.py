@@ -8,7 +8,7 @@ from services.employee import calculate_age
 from services.universal import check_and_refactor
 
 
-def check_exist_employee(birth_date, cursor, name):
+def check_exist_employee(birth_date, cursor, name, id=None):
     """
     Проверка существования сотрудника с такой же датой рождения и ФИО
     (существование сотрудника с таким же ФИО (полный тезка),
@@ -19,7 +19,9 @@ def check_exist_employee(birth_date, cursor, name):
         [name, birth_date],
     )
     exist_user = cursor.fetchone()
-    return exist_user
+    if exist_user is not None and exist_user[0] != id:
+        return True
+    return False
 
 
 def get_employees(request):
@@ -113,7 +115,7 @@ def delete_employee(request):
 def update_employee(request):
     """Редактирование сотрудника"""
     data = json.loads(request.body)
-    employee_id = data["id"]
+    employee_id = int(data["id"])
     name = check_and_refactor(data["name"], "employee")
     sex = data["sex"]
     birth_date = datetime.fromisoformat(data["birth_date"])
@@ -124,7 +126,7 @@ def update_employee(request):
         return JsonResponse({"status": "too young"})
     if request.method == "POST":
         with connection.cursor() as cursor:
-            exist_user = check_exist_employee(birth_date, cursor, name)
+            exist_user = check_exist_employee(birth_date, cursor, name, employee_id)
             if exist_user:
                 return JsonResponse({"status": "already exists"})
             else:
